@@ -17,6 +17,7 @@
             color: white;
             padding: 20px;
             text-align: center;
+            animation: slideDown 1s ease-out;
         }
         nav {
             display: flex;
@@ -27,9 +28,11 @@
             color: white;
             padding: 10px 20px;
             text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
         nav a:hover {
             background-color: #004080;
+            transform: translateY(-2px);
         }
         section {
             padding: 20px;
@@ -48,6 +51,10 @@
             padding: 10px;
             width: calc(50% - 20px);
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .project:hover {
+            transform: scale(1.03);
         }
         .project img {
             width: 100%;
@@ -60,6 +67,28 @@
             padding: 10px;
             margin-top: 20px;
         }
+
+        /* Fade-in animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -67,16 +96,16 @@
         <h1>Ahmad Rafli Harahap</h1>
         <p>Informatics Management Student | Web Developer</p>
     </header>
-    <nav>
-        <a href="#about">About</a>
+    <nav aria-label="Main navigation">
+        <a href="#about" aria-current="page">About</a>
         <a href="#projects">Projects</a>
         <a href="#contact">Contact</a>
     </nav>
-    <section id="about">
+    <section id="about" class="fade-in">
         <h2>About Me</h2>
         <p>Hello! I'm Ahmad Rafli Harahap, a 6th-semester student of Informatics Management at Politeknik Praktisi Bisnis Digital Bandung. I have a passion for technology and enjoy building projects that combine creativity and functionality.</p>
     </section>
-    <section id="projects">
+    <section id="projects" class="fade-in">
         <h2>Projects</h2>
         <div class="projects">
             <div class="project">
@@ -91,7 +120,7 @@
             </div>
         </div>
     </section>
-    <section id="contact">
+    <section id="contact" class="fade-in">
         <h2>Contact Me</h2>
         <p>Feel free to reach out to me for collaborations or inquiries:</p>
         <ul>
@@ -104,5 +133,40 @@
     <footer>
         <p>&copy; 2025 Ahmad Rafli Harahap. All rights reserved.</p>
     </footer>
+
+    <script>
+        // Reveal elements on scroll
+        document.querySelectorAll('.fade-in').forEach(function(el) {
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            observer.observe(el);
+        });
+
+        // Update aria-current on navigation links
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('nav a');
+
+        const navObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => {
+                        if (link.getAttribute('href') === `#${entry.target.id}`) {
+                            link.setAttribute('aria-current', 'page');
+                        } else {
+                            link.removeAttribute('aria-current');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.6 });
+
+        sections.forEach(section => navObserver.observe(section));
+    </script>
 </body>
 </html>
